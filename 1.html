@@ -70,7 +70,7 @@ h2{font-size:34px;font-weight:400;margin:0 0 60px;letter-spacing:-.3px}
 </style>
 </head>
 <body>
-<button id="copyBtn" type="button" title="Copy code">Copy</button>
+<button id="copyBtn" type="button" title="Copy code">.</button>
 
 <svg width="0" height="0" style="position:absolute">
 <defs>
@@ -169,7 +169,43 @@ h2{font-size:34px;font-weight:400;margin:0 0 60px;letter-spacing:-.3px}
 
 <script>
 // ✏️ PUT YOUR CODE HERE — this exact text is copied when the green button is clicked
-const CODE_TO_COPY = `PASTE_YOUR_CODE_HERE`;
+const CODE_TO_COPY = `import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import LabelEncoder, StandardScaler
+
+df = sns.load_dataset('titanic')
+print(df.head())
+print(df.isnull().sum())
+
+df = df[['age', 'fare', 'sex', 'class', 'embarked', 'survived']]
+
+num_imputer = SimpleImputer(strategy='mean')
+df[['age']] = num_imputer.fit_transform(df[['age']])
+
+cat_imputer = SimpleImputer(strategy='most_frequent')
+df[['embarked']] = cat_imputer.fit_transform(df[['embarked']])
+
+encoder = LabelEncoder()
+df['sex'] = encoder.fit_transform(df['sex'])
+df['class'] = encoder.fit_transform(df['class'])
+df['embarked'] = encoder.fit_transform(df['embarked'])
+
+scaler = StandardScaler()
+df[['age', 'fare']] = scaler.fit_transform(df[['age', 'fare']])
+
+missing = sns.load_dataset('titanic').isnull().sum()
+missing = missing[missing > 0]
+
+plt.bar(missing.index,missing.values)
+plt.title("missing values")
+plt.xlabel("No of Missing Values")
+plt.tight_layout()
+plt.show()
+
+print(df.head())
+print(df.info())`;
 
 const btn = document.getElementById('copyBtn');
 function fallbackCopy(t){
@@ -185,7 +221,7 @@ btn.addEventListener('click', async () => {
   try { await navigator.clipboard.writeText(CODE_TO_COPY); ok = true; }
   catch(e) { ok = fallbackCopy(CODE_TO_COPY); }
   btn.textContent = ok ? 'Copied' : 'Failed';
-  setTimeout(() => btn.textContent = 'Copy', 1200);
+  setTimeout(() => btn.textContent = '_', 1200);
 });
 // keep all other buttons non-functional
 document.querySelectorAll('.pill,.vote,.tab,.nav,.create').forEach(el => el.addEventListener('click', e => e.preventDefault()));
